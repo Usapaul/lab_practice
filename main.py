@@ -13,9 +13,9 @@ style.use('bmh')
 plt.rc('text', usetex=True)
 plt.rc('font', family='serif')
 
-T = 40000
-M = 8.345628E+34
-R = 1.2696316E+12
+T = 6580                       
+M = 2.5616456E+33                                 
+R = 8.3641537E+10
 p = 2.5 
 
 
@@ -29,23 +29,19 @@ def Q_mean(T):
 	'''
 	A = loadtxt('a.dat',  unpack = True)
 	B = []
-	
 	for j in range(0, len(A)):
 		a = A[j]
 		print('Work with a = %1.3f'%a)
-		lambd, Q = loadtxt('bigInputSilicat.dat',  usecols = (0, j+1),  unpack = True)
+		lambd, Q = loadtxt('bigInput.dat',  usecols = (0, j+1),  unpack = True)
 		indexes = [i for i, x in enumerate(list(Q)) if x == 0.]
 		Q = delete(Q, indexes)
 		lambd = delete(lambd, indexes)
-
 		Qpextrapolate = interp1d(lambd, Q, fill_value="extrapolate")
-
 		def Qextr(l):
 			if Qpextrapolate(l)>0:
 				return Qpextrapolate(l)
 			else:
 				return 0
-
 		#X = linspace(lambd[0], lambd[-1], 10000)
 		#q = [Qextr(x) for x in X]
 		#plt.plot(X, q, label = '$a = {}  \mu m$'.format(a))
@@ -56,14 +52,13 @@ def Q_mean(T):
 			return quad(f2, lambd[0], lambd[-1])[0]/quad(f1, lambd[0], lambd[-1])[0]
 		Qint = Qpr_mean(T)
 		print(Qint)
-		B.append(beta(R, T, M, Qint, a, p))
-
+		B.append(beta(R, T, M, Qint, a, p))	
 	dump([A,B], open('AB.obj', 'wb'))
 	plt.semilogx(A, B)
 	plt.xlim(0, 1)
 	plt.ylabel('beta')
-	plt.xlabel('$a, mkm $')
-	plt.savefig('bx.png')
+	plt.xlabel('$a, \mu m $')
+	plt.savefig('F5V_c.png')
 	plt.show()
 
 def beta(R, T, M, Q, a, p):
